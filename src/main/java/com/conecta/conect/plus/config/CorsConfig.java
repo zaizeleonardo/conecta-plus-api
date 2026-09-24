@@ -13,9 +13,10 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
         .allowedOrigins(
         	    "http://localhost:5173",
-        	    "https://conecta-plus-front-45xvqfg0s-zaize.vercel.app"
+        	    "https://conecta-plus-front-45xvqfg0s-zaize.vercel.app",
+        	    "https://conecta-plus-front.vercel.app"
         	)
-                .allowedMethods(
+        .allowedMethods(
                         "GET",
                         "POST",
                         "PUT",
