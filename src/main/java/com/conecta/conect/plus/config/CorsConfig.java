@@ -11,7 +11,10 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
+        .allowedOrigins(
+        	    "http://localhost:5173",
+        	    "https://conecta-plus-front-45xvqfg0s-zaize.vercel.app"
+        	)
                 .allowedMethods(
                         "GET",
                         "POST",
