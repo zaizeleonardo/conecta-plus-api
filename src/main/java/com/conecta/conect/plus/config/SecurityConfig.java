@@ -12,4 +12,15 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    public static void main(String[] args) {
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        String senha = "12345678";
+
+        String hash = encoder.encode(senha);
+
+        System.out.println(hash);
+    }
 }

@@ -31,11 +31,16 @@ public class Usuario {
     @Column(name = "objetivo_profissional")
     private String objetivoProfissional;
 
+    @Column(nullable = false)
+    private String perfil = "USUARIO";
+
     public Usuario() {
     }
 
     public Usuario(Long id, String nome, String email, String senha,
-                   String telefone, String cidade, String objetivoProfissional) {
+                   String telefone, String cidade,
+                   String objetivoProfissional, String perfil) {
+
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -43,6 +48,7 @@ public class Usuario {
         this.telefone = telefone;
         this.cidade = cidade;
         this.objetivoProfissional = objetivoProfissional;
+        this.perfil = perfil;
     }
 
     public Long getId() {
@@ -100,5 +106,13 @@ public class Usuario {
 
     public void setObjetivoProfissional(String objetivoProfissional) {
         this.objetivoProfissional = objetivoProfissional;
+    }
+
+    public String getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) {
+        this.perfil = perfil;
     }
 }

@@ -372,7 +372,7 @@ public class UsuarioController {
                 .build();
     }
 
-    // ============================================================
+ // ============================================================
     // Converte Entity para DTO
     // ============================================================
 
@@ -385,7 +385,8 @@ public class UsuarioController {
                 usuario.getEmail(),
                 usuario.getTelefone(),
                 usuario.getCidade(),
-                usuario.getObjetivoProfissional()
+                usuario.getObjetivoProfissional(),
+                usuario.getPerfil()
         );
     }
 }

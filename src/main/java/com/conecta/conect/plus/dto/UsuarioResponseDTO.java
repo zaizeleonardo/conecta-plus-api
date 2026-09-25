@@ -3,24 +3,38 @@ package com.conecta.conect.plus.dto;
 public class UsuarioResponseDTO {
 
     private Long id;
+
     private String nome;
+
     private String email;
+
     private String telefone;
+
     private String cidade;
+
     private String objetivoProfissional;
+
+    private String perfil;
 
     public UsuarioResponseDTO() {
     }
 
-    public UsuarioResponseDTO(Long id, String nome, String email,
-                               String telefone, String cidade,
-                               String objetivoProfissional) {
+    public UsuarioResponseDTO(
+            Long id,
+            String nome,
+            String email,
+            String telefone,
+            String cidade,
+            String objetivoProfissional,
+            String perfil) {
+
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
         this.cidade = cidade;
         this.objetivoProfissional = objetivoProfissional;
+        this.perfil = perfil;
     }
 
     public Long getId() {
@@ -69,5 +83,13 @@ public class UsuarioResponseDTO {
 
     public void setObjetivoProfissional(String objetivoProfissional) {
         this.objetivoProfissional = objetivoProfissional;
+    }
+
+    public String getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) {
+        this.perfil = perfil;
     }
 }
