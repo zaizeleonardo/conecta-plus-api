@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.conecta.conect.plus.config.JwtService;
 import com.conecta.conect.plus.dto.CompetenciaResponseDTO;
 import com.conecta.conect.plus.dto.LoginRequestDTO;
+import com.conecta.conect.plus.dto.LoginResponseDTO;
 import com.conecta.conect.plus.dto.UsuarioRequestDTO;
 import com.conecta.conect.plus.dto.UsuarioResponseDTO;
 import com.conecta.conect.plus.dto.UsuarioUpdateDTO;
@@ -40,19 +42,22 @@ public class UsuarioController {
     private final UsuarioCompetenciaRepository usuarioCompetenciaRepository;
     private final CompetenciaRepository competenciaRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public UsuarioController(
             UsuarioRepository usuarioRepository,
             UsuarioService usuarioService,
             UsuarioCompetenciaRepository usuarioCompetenciaRepository,
             CompetenciaRepository competenciaRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
 
         this.usuarioRepository = usuarioRepository;
         this.usuarioService = usuarioService;
         this.usuarioCompetenciaRepository = usuarioCompetenciaRepository;
         this.competenciaRepository = competenciaRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     // ============================================================
@@ -270,9 +275,8 @@ public class UsuarioController {
     // POST /usuarios/login
     // Realiza login
     // ============================================================
-
     @PostMapping("/login")
-    public ResponseEntity<UsuarioResponseDTO> login(
+    public ResponseEntity<LoginResponseDTO> login(
             @RequestBody LoginRequestDTO request) {
 
         Usuario usuario =
@@ -300,11 +304,19 @@ public class UsuarioController {
                     .build();
         }
 
-        return ResponseEntity.ok(
-                converterParaDTO(usuario)
+        String token = jwtService.gerarToken(
+                usuario.getId(),
+                usuario.getPerfil()
         );
-    }
 
+        LoginResponseDTO resposta =
+                new LoginResponseDTO(
+                        converterParaDTO(usuario),
+                        token
+                );
+
+        return ResponseEntity.ok(resposta);
+    }
     // ============================================================
     // PUT /usuarios/{id}
     // Atualiza usuário
@@ -372,7 +384,7 @@ public class UsuarioController {
                 .build();
     }
 
- // ============================================================
+    // ============================================================
     // Converte Entity para DTO
     // ============================================================
 

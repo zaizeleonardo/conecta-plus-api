@@ -1,7 +1,12 @@
 package com.conecta.conect.plus.controller;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,17 +41,20 @@ public class VagaController {
     private final VagaCompetenciaRepository vagaCompetenciaRepository;
     private final CompetenciaRepository competenciaRepository;
     private final VagaService vagaService;
+    private final DataSource dataSource;
 
     public VagaController(
             VagaRepository vagaRepository,
             VagaCompetenciaRepository vagaCompetenciaRepository,
             CompetenciaRepository competenciaRepository,
-            VagaService vagaService) {
+            VagaService vagaService,
+            DataSource dataSource) {
 
         this.vagaRepository = vagaRepository;
         this.vagaCompetenciaRepository = vagaCompetenciaRepository;
         this.competenciaRepository = competenciaRepository;
         this.vagaService = vagaService;
+        this.dataSource = dataSource;
     }
 
     // =========================
@@ -57,6 +65,121 @@ public class VagaController {
     public List<VagaResponseDTO> listarTodas() {
 
         List<Vaga> vagas = vagaRepository.findAll();
+
+        if (!vagas.isEmpty()) {
+
+            System.out.println(
+                    ">>> CIDADE LIDA PELO JAVA: "
+                    + vagas.get(0).getCidade()
+            );
+
+            System.out.println(
+                    ">>> UNICODE: "
+                    + vagas.get(0).getCidade()
+                            .codePoints()
+                            .mapToObj(c -> String.format("\\u%04X", c))
+                            .toList()
+            );
+        }
+
+        // =========================
+        // DIAGNÓSTICO DA CONEXÃO JDBC
+        // =========================
+
+        try (
+                Connection connection = dataSource.getConnection();
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(
+                        "SELECT "
+                        + "@@character_set_client AS client_charset, "
+                        + "@@character_set_connection AS connection_charset, "
+                        + "@@character_set_results AS results_charset, "
+                        + "@@character_set_database AS database_charset, "
+                        + "@@character_set_server AS server_charset"
+                )
+        ) {
+
+            if (resultSet.next()) {
+
+                System.out.println(
+                        ">>> JDBC CHARSET CLIENT: "
+                        + resultSet.getString("client_charset")
+                );
+
+                System.out.println(
+                        ">>> JDBC CHARSET CONNECTION: "
+                        + resultSet.getString("connection_charset")
+                );
+
+                System.out.println(
+                        ">>> JDBC CHARSET RESULTS: "
+                        + resultSet.getString("results_charset")
+                );
+
+                System.out.println(
+                        ">>> JDBC CHARSET DATABASE: "
+                        + resultSet.getString("database_charset")
+                );
+
+                System.out.println(
+                        ">>> JDBC CHARSET SERVER: "
+                        + resultSet.getString("server_charset")
+                );
+            }
+
+        } catch (Exception erro) {
+
+            System.out.println(
+                    ">>> ERRO AO CONSULTAR CHARSET JDBC: "
+                    + erro.getMessage()
+            );
+        }
+
+        // =========================
+        // TESTE JDBC DA CIDADE
+        // =========================
+
+        try (
+                Connection connection = dataSource.getConnection();
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(
+                        "SELECT cidade, HEX(cidade) AS bytes_cidade "
+                        + "FROM vagas WHERE id = 1"
+                )
+        ) {
+
+            if (resultSet.next()) {
+
+                String cidadeJdbc = resultSet.getString("cidade");
+                String hexJdbc = resultSet.getString("bytes_cidade");
+
+                System.out.println(
+                        ">>> JDBC CIDADE: "
+                        + cidadeJdbc
+                );
+
+                System.out.println(
+                        ">>> JDBC HEX: "
+                        + hexJdbc
+                );
+
+                System.out.println(
+                        ">>> JDBC BYTES: "
+                        + java.util.Arrays.toString(
+                                cidadeJdbc.getBytes(
+                                        java.nio.charset.StandardCharsets.UTF_8
+                                )
+                        )
+                );
+            }
+
+        } catch (Exception erro) {
+
+            System.out.println(
+                    ">>> ERRO TESTE JDBC CIDADE: "
+                    + erro.getMessage()
+            );
+        }
 
         return vagas.stream()
                 .map(this::converterParaDTO)
@@ -91,6 +214,7 @@ public class VagaController {
             @PathVariable Long id) {
 
         if (!vagaRepository.existsById(id)) {
+
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .build();
@@ -175,7 +299,9 @@ public class VagaController {
 
             vagaService.excluir(id);
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity
+                    .noContent()
+                    .build();
 
         } catch (IllegalArgumentException erro) {
 
