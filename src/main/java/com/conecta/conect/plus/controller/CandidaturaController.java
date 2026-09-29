@@ -2,11 +2,12 @@ package com.conecta.conect.plus.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import com.conecta.conect.plus.dto.CandidaturaCandidatoDTO;
 import com.conecta.conect.plus.entity.Candidatura;
 import com.conecta.conect.plus.service.CandidaturaService;
 
@@ -14,8 +15,13 @@ import com.conecta.conect.plus.service.CandidaturaService;
 @RequestMapping("/candidaturas")
 public class CandidaturaController {
 
-    @Autowired
-    private CandidaturaService candidaturaService;
+    private final CandidaturaService candidaturaService;
+
+    public CandidaturaController(
+            CandidaturaService candidaturaService) {
+
+        this.candidaturaService = candidaturaService;
+    }
 
     @PostMapping
     public ResponseEntity<?> candidatar(
@@ -42,7 +48,6 @@ public class CandidaturaController {
         }
     }
 
-
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<Candidatura>> listarPorUsuario(
             @PathVariable Long usuarioId) {
@@ -52,13 +57,26 @@ public class CandidaturaController {
         );
     }
 
-
     @GetMapping("/vaga/{vagaId}")
-    public ResponseEntity<List<Candidatura>> listarPorVaga(
-            @PathVariable Long vagaId) {
+    public ResponseEntity<?> listarPorVaga(
+            @PathVariable Long vagaId,
+            Authentication authentication) {
 
-        return ResponseEntity.ok(
-                candidaturaService.listarPorVaga(vagaId)
-        );
+        try {
+
+            List<CandidaturaCandidatoDTO> candidatos =
+                    candidaturaService.listarPorVaga(
+                            vagaId,
+                            authentication
+                    );
+
+            return ResponseEntity.ok(candidatos);
+
+        } catch (IllegalArgumentException erro) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(erro.getMessage());
+        }
     }
 }

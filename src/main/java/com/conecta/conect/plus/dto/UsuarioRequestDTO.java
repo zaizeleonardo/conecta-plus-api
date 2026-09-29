@@ -26,6 +26,8 @@ public class UsuarioRequestDTO {
     @NotBlank(message = "O objetivo profissional é obrigatório.")
     private String objetivoProfissional;
 
+    private String perfil;
+
     public UsuarioRequestDTO() {
     }
 
@@ -75,5 +77,13 @@ public class UsuarioRequestDTO {
 
     public void setObjetivoProfissional(String objetivoProfissional) {
         this.objetivoProfissional = objetivoProfissional;
+    }
+
+    public String getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) {
+        this.perfil = perfil;
     }
 }

@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -29,6 +31,10 @@ public class Vaga {
 
     private BigDecimal salario;
 
+    @ManyToOne
+    @JoinColumn(name = "empresa_id")
+    private Usuario empresaUsuario;
+
     public Vaga() {
     }
 
@@ -39,7 +45,8 @@ public class Vaga {
             String descricao,
             String cidade,
             String modalidade,
-            BigDecimal salario) {
+            BigDecimal salario,
+            Usuario empresaUsuario) {
 
         this.id = id;
         this.titulo = titulo;
@@ -48,6 +55,7 @@ public class Vaga {
         this.cidade = cidade;
         this.modalidade = modalidade;
         this.salario = salario;
+        this.empresaUsuario = empresaUsuario;
     }
 
     public Long getId() {
@@ -104,5 +112,13 @@ public class Vaga {
 
     public void setSalario(BigDecimal salario) {
         this.salario = salario;
+    }
+
+    public Usuario getEmpresaUsuario() {
+        return empresaUsuario;
+    }
+
+    public void setEmpresaUsuario(Usuario empresaUsuario) {
+        this.empresaUsuario = empresaUsuario;
     }
 }

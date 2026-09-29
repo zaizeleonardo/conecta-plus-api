@@ -251,6 +251,21 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> criarUsuario(
             @Valid @RequestBody UsuarioRequestDTO request) {
 
+        String perfil = request.getPerfil();
+
+        // Se o perfil não for informado, será considerado USUARIO
+        if (perfil == null || perfil.isBlank()) {
+            perfil = "USUARIO";
+        }
+
+        // Aceita somente USUARIO ou EMPRESA
+        if (!perfil.equals("USUARIO") && !perfil.equals("EMPRESA")) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .build();
+        }
+
         Usuario usuario = new Usuario();
 
         usuario.setNome(request.getNome());
@@ -262,6 +277,8 @@ public class UsuarioController {
         usuario.setObjetivoProfissional(
                 request.getObjetivoProfissional()
         );
+
+        usuario.setPerfil(perfil);
 
         Usuario usuarioSalvo =
                 usuarioService.salvar(usuario);
@@ -275,6 +292,7 @@ public class UsuarioController {
     // POST /usuarios/login
     // Realiza login
     // ============================================================
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
             @RequestBody LoginRequestDTO request) {
@@ -317,6 +335,7 @@ public class UsuarioController {
 
         return ResponseEntity.ok(resposta);
     }
+
     // ============================================================
     // PUT /usuarios/{id}
     // Atualiza usuário

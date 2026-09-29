@@ -41,38 +41,72 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                // Cadastro e login são públicos
+                // ====================================================
+                // CADASTRO E LOGIN - PÚBLICOS
+                // ====================================================
+
                 .requestMatchers(
-                    "/usuarios",
+                    HttpMethod.POST,
+                    "/usuarios"
+                ).permitAll()
+
+                .requestMatchers(
                     "/usuarios/login"
                 ).permitAll()
 
-                // Visualização de vagas
+                // ====================================================
+                // LISTAR USUÁRIOS - SOMENTE ADMIN
+                // ====================================================
+
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/usuarios"
+                ).hasRole("ADMIN")
+
+                // ====================================================
+                // VISUALIZAÇÃO DE VAGAS
                 // Qualquer usuário autenticado pode visualizar
+                // ====================================================
+
                 .requestMatchers(
                     HttpMethod.GET,
                     "/vagas/**"
                 ).authenticated()
 
-                // Criar vaga: somente ADMIN
+                // ====================================================
+                // CRIAR VAGA
+                // ADMIN ou EMPRESA
+                // ====================================================
+
                 .requestMatchers(
                     HttpMethod.POST,
                     "/vagas/**"
-                ).hasRole("ADMIN")
+                ).hasAnyRole("ADMIN", "EMPRESA")
 
-                // Editar vaga: somente ADMIN
+                // ====================================================
+                // EDITAR VAGA
+                // ADMIN ou EMPRESA
+                // ====================================================
+
                 .requestMatchers(
                     HttpMethod.PUT,
                     "/vagas/**"
-                ).hasRole("ADMIN")
+                ).hasAnyRole("ADMIN", "EMPRESA")
 
-                // Excluir vaga: somente ADMIN
+                // ====================================================
+                // EXCLUIR VAGA
+                // ADMIN ou EMPRESA
+                // ====================================================
+
                 .requestMatchers(
                     HttpMethod.DELETE,
                     "/vagas/**"
-                ).hasRole("ADMIN")
+                ).hasAnyRole("ADMIN", "EMPRESA")
 
-                // Demais endpoints exigem autenticação
+                // ====================================================
+                // DEMAIS ENDPOINTS
+                // ====================================================
+
                 .anyRequest().authenticated()
             );
 
