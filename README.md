@@ -1,5 +1,7 @@
 # Conecta+ API
 
+![CI](https://github.com/zaizeleonardo/conecta-plus-api/actions/workflows/ci.yml/badge.svg)
+
 Backend do **Conecta+**, projeto final desenvolvido no Programa Transforma Futuros – Recode.
 
 O sistema conecta candidatos e empresas por meio de uma API REST desenvolvida em Java e Spring Boot, utilizando MySQL para persistência dos dados.
@@ -25,6 +27,10 @@ Além do percentual de compatibilidade, o sistema identifica competências que f
 - JWT
 - MySQL
 - Maven
+- Swagger / OpenAPI (springdoc)
+- JUnit 5 + Mockito
+- Docker / Docker Compose
+- GitHub Actions (CI)
 
 ## 🧩 Principais recursos
 
@@ -54,25 +60,44 @@ O `schema.sql` documenta a estrutura das tabelas e relacionamentos. O `seed.sql`
 
 ## ▶️ Executando localmente
 
-### Pré-requisitos
+### Opção 1 — Docker (recomendado)
 
-- Java instalado
-- Git
-- Banco MySQL disponível
+Sobe o MySQL já com o `schema.sql` e o `seed.sql` carregados, e a API em seguida:
 
-### Build
-
-O projeto utiliza Maven Wrapper. No Windows PowerShell:
-
-```powershell
-.\mvnw clean package
+```bash
+cp .env.example .env   # ajuste DB_PASSWORD e JWT_SECRET
+docker compose up --build
 ```
 
-Para execução pelo ambiente de desenvolvimento, importe o projeto Maven no Spring Tools for Eclipse (STS) ou utilize o mecanismo de execução da IDE.
+- API: http://localhost:8080
+- Documentação (Swagger): http://localhost:8080/swagger-ui.html
 
-### Configuração
+### Opção 2 — Maven
 
-Configure as variáveis/propriedades necessárias para conexão com o MySQL e para o JWT no ambiente local. **Não versione senhas, tokens, chaves ou credenciais.**
+Pré-requisitos: Java 21 e um MySQL com o banco `conecta_plus` criado a partir de `database/`.
+
+```bash
+cp .env.example .env   # preencha DB_URL, DB_USERNAME, DB_PASSWORD e JWT_SECRET
+./mvnw spring-boot:run          # Linux/macOS
+.\mvnw spring-boot:run          # Windows PowerShell
+```
+
+As variáveis são lidas do `.env` (veja `application.properties`). **Não versione senhas, tokens, chaves ou credenciais.**
+
+## 📖 Documentação da API
+
+Com a aplicação rodando, acesse `/swagger-ui.html`. Para testar endpoints protegidos:
+
+1. Faça `POST /usuarios/login` e copie o token retornado.
+2. Clique em **Authorize** e cole o token.
+
+## 🧪 Testes
+
+```bash
+./mvnw test
+```
+
+Os testes unitários de `DiagnosticoService` cobrem a regra principal do sistema (competências atendidas/faltantes, percentual de compatibilidade e recomendação de cursos) sem depender de banco de dados. Eles rodam automaticamente a cada push pelo GitHub Actions.
 
 ## 🌐 Ambiente publicado
 
@@ -83,7 +108,7 @@ A raiz da API pode retornar `403`, pois os endpoints da aplicação possuem regr
 
 ## 📌 Status
 
-Backend validado com `BUILD SUCCESS` usando Maven Wrapper e Java 25.
+Backend publicado e em funcionamento, com build e testes automatizados via GitHub Actions (Java 21).
 
 ---
 
