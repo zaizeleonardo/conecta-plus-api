@@ -55,6 +55,16 @@ public class SecurityConfig {
                 ).permitAll()
 
                 // ====================================================
+                // DOCUMENTAÇÃO DA API (SWAGGER) - PÚBLICA
+                // ====================================================
+
+                .requestMatchers(
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**"
+                ).permitAll()
+
+                // ====================================================
                 // LISTAR USUÁRIOS - SOMENTE ADMIN
                 // ====================================================
 
