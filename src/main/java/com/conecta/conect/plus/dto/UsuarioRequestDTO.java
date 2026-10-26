@@ -23,7 +23,7 @@ public class UsuarioRequestDTO {
     @NotBlank(message = "A cidade é obrigatória.")
     private String cidade;
 
-    @NotBlank(message = "O objetivo profissional é obrigatório.")
+    // Opcional: o cadastro de EMPRESA não tem objetivo profissional.
     private String objetivoProfissional;
 
     private String perfil;
